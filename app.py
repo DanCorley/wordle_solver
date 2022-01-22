@@ -5,7 +5,7 @@ import re
 
 five_lttrs = [x.lower() for x in english_words_set if len(x) == 5]
 
-st.set_page_config(page_title="Wordle Solver", page_icon="🐞", layout="centered")
+st.set_page_config(page_title="Wordle Solver", page_icon="📖", layout="centered")
 
 st.title(f'**There are {len(five_lttrs):,} five letter words that you can pick in Wordle. Choose wisely.**')
 st.write('---')
