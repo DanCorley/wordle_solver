@@ -1,2 +1,2 @@
-streamlit==1.4.0
+streamlit
 english-words==1.0.4
