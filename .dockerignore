@@ -1,0 +1,7 @@
+*.xlsx
+*.png
+venv
+.venv
+.git
+*.md
+images/
