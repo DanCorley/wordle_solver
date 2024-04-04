@@ -1,9 +1,12 @@
 import streamlit as st
 from collections import Counter
-from english_words import english_words_set
+from english_words import get_english_words_set
 import re
 
-five_lttrs = [x.lower() for x in english_words_set if len(x) == 5]
+five_lttrs = [
+    x for x in get_english_words_set(['gcide', 'web2'], lower=True)
+    if len(x) == 5
+]
 five_lttrs.sort()
 
 st.set_page_config(page_title="Wordle Solver", page_icon="📖", layout="centered")

@@ -1,2 +1,2 @@
 streamlit
-english-words==1.0.4
+english-words==2.0.1
