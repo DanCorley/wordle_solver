@@ -6,9 +6,8 @@ services:
     container_name: wordle_solver
     volumes:
       - ./:/streamlit
-      - /home/dan/.streamlit:/root/.streamlit
     ports:
-      - "8501:8501"
+      - 8501:8501
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
-    restart: always
+    restart: unless-stopped
