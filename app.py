@@ -1,10 +1,11 @@
 import streamlit as st
 from collections import Counter
 from english_words import get_english_words_set
-import re
+from src.string_matcher import match_all
 
 five_lttrs = [
-    x for x in get_english_words_set(['gcide', 'web2'], lower=True)
+    # taking out 'gcide' because it doesn't seem reliable
+    x for x in get_english_words_set(['web2'], lower=True)
     if len(x) == 5
 ]
 five_lttrs.sort()
@@ -14,8 +15,7 @@ st.set_page_config(page_title="Wordle Solver", page_icon="📖", layout="centere
 st.title(f'**There are {len(five_lttrs):,} five letter words that you can pick in Wordle. Choose wisely.**')
 st.write('---')
 
-st.write('Have you guessed the any of following?')
-
+st.markdown('Have you guessed characters in the correct spot?', help='These are the green letters in Wordle.')
 
 cols = st.columns(5)
 one = cols[0].text_input("first letter", key='1_correct') or '\w' 
@@ -25,7 +25,7 @@ four = cols[3].text_input("fourth letter", key='4_correct') or '\w'
 five = cols[4].text_input("fifth letter", key='5_correct') or '\w'
 
 
-st.write('Did you guess any incorrectly yet?')
+st.markdown('Have you guessed any letters that are out of place?', help='These are the yellow letters in Wordle.')
 
 not_cols = st.columns(5)
 not_one = not_cols[0].text_input("first letter", key='1_incorrect') or False
@@ -35,30 +35,29 @@ not_four = not_cols[3].text_input("fourth letter", key='4_incorrect') or False
 not_five = not_cols[4].text_input("fifth letter", key='5_incorrect') or False
 
 
-good_letters = st.text_input("Have you guessed any letters that are out of place?", key='all_good')
+bad_letters = list(st.text_input('Did you guess any incorrectly yet?', key='all_bad', help='These are the grey letters in Wordle.'))
 
-    
 lttrs = [one, two, three, four, five]
 not_lttrs = [not_one, not_two, not_three, not_four, not_five]
 
+not_null_lttrs = [x for x in lttrs if x != '\w']
+not_letter_list = [x for x in not_lttrs if x]
+chosen_letters = set(bad_letters + not_letter_list + not_null_lttrs)
 
-correct_letters = [x for x in lttrs if x != '\w']
-good_letters = list(good_letters) or correct_letters
-not_letter_list = [y for x in not_lttrs if x for y in x]
-chosen_letters = set(good_letters + not_letter_list + correct_letters)
+# st.write(match_all('hello', not_null_lttrs, not_lttrs, bad_letters))
+
 
 if len([x for x in chosen_letters if x not in ('\w', None)]):
-    
     st.write('---')
 
     final_list = [
         word for word in five_lttrs
-        # correct letters match in the index of word
-        if all([re.match(num, word[i]) for i, num in enumerate(lttrs)])
-        # incorrect letters match in the index of word ( can accomodate multiple per index )
-        and not any([max([y == word[i] for y in lttrs]) if lttrs else False for i, lttrs in enumerate(not_lttrs)])
-        # matches any of the incorrect guessed index letters
-        and len([c for c in good_letters if c in word]) == len(good_letters)
+        if match_all(
+            word = word,
+            correct_list = lttrs,
+            incorrect_list = not_lttrs,
+            bad_list = bad_letters
+        )
     ]
 
     st.success('**Use these to help you make your next choice :)**')
