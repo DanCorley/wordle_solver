@@ -32,19 +32,3 @@ def match_all(word: str, correct_list: list[str], incorrect_list: list[str], bad
     ]
     
     return all(is_matched)
-
-    # final_list = [
-    #     word for word in five_lttrs
-    #     # correct letters match in specific index of word
-    #     if all([re.match(num, word[i]) for i, num in enumerate(lttrs)])
-
-    #     # incorrect letters don't match in the index of word but are included in the word
-    #     # ( accomodating multiple per index )
-    #     and (
-    #       not any([any([y == word[i] for y in x]) if x else False for i, x in enumerate(not_lttrs)])
-    #         and any([any([y in word for y in x]) if x else False for x in not_lttrs])
-    #     )
-
-    #     # any bad letters cannot be in the word
-    #     and not any([c for c in bad_letters if c in word])
-    # ]
