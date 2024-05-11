@@ -2,15 +2,23 @@ import streamlit as st
 from collections import Counter
 from english_words import get_english_words_set
 from src.string_matcher import match_all
-
-five_lttrs = [
-    # taking out 'gcide' because it doesn't seem reliable
-    x for x in get_english_words_set(['web2'], lower=True)
-    if len(x) == 5
-]
-five_lttrs.sort()
+from src.import_list import get_word_list
 
 st.set_page_config(page_title="Wordle Solver", page_icon="📖", layout="centered")
+
+# five_lttrs = [
+#     # taking out 'gcide' because it doesn't seem reliable
+#     x for x in get_english_words_set(['web2'], lower=True)
+#     if len(x) == 5
+# ]
+# five_lttrs.sort()
+
+@st.cache_data
+def get_english_words_set():
+    return get_word_list()
+
+five_lttrs = get_english_words_set()
+
 
 st.title(f'**There are {len(five_lttrs):,} five letter words that you can pick in Wordle. Choose wisely.**')
 st.write('---')
