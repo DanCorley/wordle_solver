@@ -1,7 +1,7 @@
 # building base
-FROM python:3.9-slim as base
+FROM python:3.9-slim AS base
 
-FROM base as builder
+FROM base AS builder
 
 WORKDIR /install
 
@@ -22,5 +22,5 @@ COPY --from=builder /ny_times /ny_times
 
 WORKDIR /streamlit
 
-CMD streamlit run app.py
+CMD ["streamlit", "run", "app.py"]
 
