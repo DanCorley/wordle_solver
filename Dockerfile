@@ -1,56 +1,31 @@
-# building base
-FROM python:3.10-slim AS base
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
-
-FROM base AS builder
-
-WORKDIR /install
-
-RUN apt-get update \
-  && apt-get install --no-install-recommends gcc curl -y \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-  
-COPY requirements.txt .
-
-RUN pip install --prefix=/install --no-cache-dir -r requirements.txt
-
-RUN curl --create-dirs -o /ny_times/word_list.txt https://gist.githubusercontent.com/cfreshman/d97dbe7004522f7bc52ed2a6e22e2c04/raw/
-
-# production
-FROM base
-
-# Create a non-root user
-RUN adduser --disabled-password --gecos "" appuser
-
-COPY --from=builder /install /usr/local/
-COPY --from=builder /ny_times /ny_times
+# build the static bundle
+FROM node:24-alpine AS build
 
 WORKDIR /app
 
-# Copy application files into the container
-COPY ./*.py /app/
-COPY ./src/*.py /app/src/
+COPY web/package.json web/package-lock.json ./web/
+RUN cd web && npm ci --no-audit --no-fund
 
-# Set ownership to the non-root user
-RUN chown -R appuser:appuser /app /ny_times
+# the word lists live at the repo root and are imported into the build
+COPY data ./data
+COPY web ./web
 
-# Switch to non-root user
-USER appuser
+RUN cd web && npm run build
 
-# Healthcheck
-HEALTHCHECK --interval=60s --timeout=5s --start-period=30s --retries=2 \
-  CMD curl -f http://localhost:8501/ || exit 1
+# serve it as an unprivileged user; 8501 is above 1024, so no capabilities are needed
+FROM nginxinc/nginx-unprivileged:stable-alpine
 
-# Set labels for better maintainability
+COPY --from=build /app/web/dist /usr/share/nginx/html
+COPY web/nginx.conf /etc/nginx/conf.d/default.conf
+
+# The base image already runs as nginx; state it so a future base swap cannot regress it.
+USER nginx
+
+EXPOSE 8501
+
+HEALTHCHECK --interval=60s --timeout=5s --start-period=5s --retries=2 \
+  CMD wget -q --spider http://127.0.0.1:8501/ || exit 1
+
 LABEL maintainer="Dan Corley <hello@dancorley.com>" \
-      version="1.0.1" \
+      version="2.0.0" \
       description="Wordle Solver Application"
-
-# Use ENTRYPOINT for the application
-ENTRYPOINT ["streamlit"]
-CMD ["run", "app.py"]

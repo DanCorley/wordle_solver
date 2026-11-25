@@ -7,5 +7,8 @@ up:
 down:
 	docker compose down -v
 
+dev:
+	cd web && npm run dev
+
 test:
-	docker compose run --rm app python -m pytest
+	cd web && npm test

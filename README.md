@@ -1,9 +1,56 @@
 # Wordle Solver
 
-This app helps to solve the daily puzzles on **[Worlde](https://www.powerlanguage.co.uk/wordle/)**. It is based on the [NY Times 5 letter english words](https://gist.github.com/cfreshman/d97dbe7004522f7bc52ed2a6e22e2c04) published by [@cfreshman](https://github.com/cfreshman) into consideration, slims them down based on your (in)correct guesses, and outputs a list of all still existing words.
+Narrow down today's Wordle answer from the colors of your guesses. Type a guess, mark its five
+tiles the way Wordle did, and the candidates narrow as you go.
 
-Add letters to the boxes as you guess, and see the words populate below. The 'incorrect' and 'out of place' boxes can hold multiple characters, which should be input with no spaces `'rofl'`
+**[wordle.watermancorley.com](https://wordle.watermancorley.com/)**
 
-**[Check out the app on Streamlit!](https://wordle.watermancorley.com/)**
+## How it works
 
-![screenshot](images/wordle_screenshot.png)
+- Type a five-letter guess, or tap the board on a phone to raise the keyboard. `Enter` moves to the
+  next row.
+- Click each tile to cycle its color: green ✓ right spot, yellow ↔ wrong spot, grey × not in the word.
+- The count and word list narrow as soon as you mark a tile. Unmarked tiles are ignored, so a
+  half-filled row never hides the answer.
+- Click a suggested opener or any candidate word to load it into the active row.
+- `Undo last` clears the most recent guess. `New game` resets the board.
+- The theme button switches light/dark and remembers your choice.
+- On phones, a sticky bar keeps the live count in view.
+
+It is a static React + TypeScript bundle. No backend: the word lists ship with the bundle and
+filtering happens in the browser, so the count updates instantly.
+
+## Word lists
+
+- `data/answers.txt` — the 2,315 words that can actually be the answer.
+- `data/guesses.txt` — 10,657 additional words Wordle accepts as a guess.
+
+Both come from [@cfreshman's Wordle gists](https://gist.github.com/cfreshman/a03ef2cba789d8cf00c08f767e0fad7b):
+the [answer list](https://gist.github.com/cfreshman/a03ef2cba789d8cf00c08f767e0fad7b) and the
+[guess-only list](https://gist.github.com/cfreshman/cdcdf777450c5b5301e439061d29694c).
+
+Possible answers are filtered from the 2,315-word answer list only. If a board matches none of
+them, the app falls back to the 10,657 guess-only words, labels them as outside the answer list,
+and keeps them separate from the main results.
+
+## Local development
+
+```bash
+cd web
+npm install
+npm run dev      # http://localhost:5173
+npm test         # solver and UI tests
+npm run build    # typecheck plus static bundle in web/dist
+```
+
+With Docker:
+
+```bash
+make build
+make up          # http://localhost:8501
+```
+
+## Tests
+
+`web/src/solver.test.ts` covers the marking rules (including repeated letters) and filtering.
+`web/src/App.test.tsx` types a guess, marks all five tiles, and checks the count collapses to one.

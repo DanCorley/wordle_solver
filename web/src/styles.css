@@ -1,0 +1,701 @@
+:root {
+  --tile: 60px;
+  --radius: 5px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root,
+:root[data-theme='dark'] {
+  --bg: #121213;
+  --panel: #1b1b1c;
+  --text: #f4f4f5;
+  --muted: #a1a1a6;
+  --line: #3a3a3c;
+  --line-strong: #565758;
+  --green: #538d4e;
+  --yellow: #b59f3b;
+  --grey: #3a3a3c;
+  --accent: #6aaa64;
+  --warn: #d9a343;
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --bg: #f6f6f4;
+  --panel: #ffffff;
+  --text: #121213;
+  --muted: #6d6d72;
+  --line: #d3d6da;
+  --line-strong: #b5b8bb;
+  --green: #6aaa64;
+  --yellow: #c9b458;
+  --grey: #787c7e;
+  --accent: #538d4e;
+  --warn: #a8711a;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.app {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 28px 20px 72px;
+}
+
+/* header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+
+h1 {
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.sub {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.brand {
+  display: grid;
+  grid-template-columns: repeat(5, 9px);
+  gap: 2px;
+  flex: none;
+}
+
+.brand span {
+  height: 9px;
+  border-radius: 2px;
+  background: var(--grey);
+}
+
+.brand span:nth-child(1),
+.brand span:nth-child(5) {
+  background: var(--green);
+}
+
+.brand span:nth-child(3) {
+  background: var(--yellow);
+}
+
+.theme-toggle {
+  margin-left: auto;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+/* layout */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+
+.play {
+  position: sticky;
+  top: 24px;
+}
+
+.mobile-bar {
+  display: none;
+}
+
+@media (max-width: 880px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+
+  /* Before the first guess the opener picker sits above the board. */
+  .layout.empty .play {
+    order: 2;
+  }
+
+  .layout.empty .results-column {
+    order: 1;
+  }
+
+  .play {
+    position: static;
+    /* Clear the sticky count bar when a candidate scrolls the board into view. */
+    scroll-margin-top: 64px;
+  }
+
+  .header {
+    margin-bottom: 14px;
+  }
+
+  .mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    margin-bottom: 18px;
+    padding: 6px 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .mobile-count {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    background: none;
+    border: 0;
+  }
+
+  button.mobile-count {
+    cursor: pointer;
+  }
+
+  .mobile-count:hover {
+    color: var(--text);
+  }
+
+  .mobile-count strong {
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .mobile-count .chevron {
+    font-size: 0.9rem;
+    align-self: center;
+  }
+
+  /* The sticky bar carries the live count on small screens. */
+  .layout .count {
+    display: none;
+  }
+
+  /* The results start right under the play controls; no extra leading gap. */
+  .results-column .note {
+    margin-top: 0;
+  }
+
+  /* In the "started but nothing marked" state the results hold only the count. */
+  .results-column.count-only {
+    display: none;
+  }
+
+  .footer {
+    margin-top: 28px;
+  }
+}
+
+/* board */
+.board {
+  display: grid;
+  gap: 8px;
+  justify-content: center;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(5, var(--tile));
+  gap: 8px;
+}
+
+.tile {
+  position: relative;
+  width: var(--tile);
+  height: var(--tile);
+  display: block;
+  padding: 0;
+  background: transparent;
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 80ms ease,
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.tile .letter {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--tile) * 0.56);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.tile:not(.filled) {
+  cursor: text;
+}
+
+.tile.filled:active {
+  transform: scale(0.96);
+}
+
+.row.active .tile.filled:not(.correct):not(.present):not(.absent) {
+  border-color: var(--line-strong);
+}
+
+.tile.correct {
+  background: var(--green);
+  border-color: var(--green);
+  /* Dark text clears WCAG on both green palettes; white was 2.6–2.8:1. */
+  color: #121213;
+}
+
+.tile.present {
+  background: var(--yellow);
+  border-color: var(--yellow);
+  color: #121213;
+}
+
+.tile.absent {
+  background: var(--grey);
+  border-color: var(--grey);
+  color: #fff;
+}
+
+.tile .mark {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+/* play helpers */
+/* The real input lives off to the side: focusable, but never visible. */
+.guess-input-hidden {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px; /* stops iOS zooming if it ever becomes visible */
+  pointer-events: none;
+}
+
+.hint {
+  margin-top: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+/* Same type as .hint, but it sits above the board instead of below it. */
+.hint-above {
+  margin: 0 0 12px;
+}
+
+.warn-text {
+  color: var(--warn);
+  margin-top: 8px;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 16px;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.swatch.correct {
+  background: var(--green);
+}
+
+.swatch.present {
+  background: var(--yellow);
+}
+
+.swatch.absent {
+  background: var(--grey);
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.action {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    background-color 120ms ease;
+}
+
+.action:hover:not(:disabled) {
+  border-color: var(--line-strong);
+}
+
+.action:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* results */
+.count {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.count .number {
+  font-size: 3.6rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.count .caption {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  max-width: 52ch;
+}
+
+.results-column {
+  scroll-margin-top: 64px;
+}
+
+.section {
+  margin: 26px 0 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  color: var(--muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--panel);
+}
+
+.chip.more {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+.chip.guess {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+button.chip {
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    transform 80ms ease;
+}
+
+button.chip:hover {
+  border-color: var(--line-strong);
+}
+
+button.chip:active {
+  transform: scale(0.97);
+}
+
+.letters {
+  display: grid;
+  gap: 7px;
+}
+
+.letter {
+  display: grid;
+  grid-template-columns: 16px 1fr 38px;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.8rem;
+}
+
+.letter b {
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+.bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+}
+
+.letter em {
+  color: var(--muted);
+  font-style: normal;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.picks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-inline: 8px;
+}
+
+.pick-row {
+  display: flex;
+  gap: 6px;
+}
+
+.pick {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  padding: 6px 7px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    transform 80ms ease;
+}
+
+.pick:hover {
+  border-color: var(--line-strong);
+}
+
+.pick:active {
+  transform: scale(0.97);
+}
+
+.card {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.card h3 {
+  font-size: 1.05rem;
+  margin: 4px 0 6px;
+}
+
+.card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.card.warn {
+  border-left-color: var(--warn);
+}
+
+.card.win {
+  border-left-color: var(--green);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.answer {
+  display: block;
+  margin: 6px 0 2px;
+  padding: 0;
+  background: none;
+  border: 0;
+  font-family: var(--mono);
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.answer:hover {
+  text-decoration: underline;
+}
+
+/* footer */
+.footer {
+  display: grid;
+  gap: 3px;
+  margin-top: 56px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.footer strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.footer a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-underline-offset: 2px;
+}
+
+.footer a:hover {
+  color: var(--text);
+}
+
+/* focus + motion */
+.tile:focus-visible,
+.action:focus-visible,
+.pick:focus-visible,
+button.chip:focus-visible,
+.answer:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .brand {
+    display: none;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  .sub {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 460px) {
+  :root {
+    --tile: 50px;
+  }
+}
+
+@media (max-width: 380px) {
+  :root {
+    --tile: 45px;
+  }
+}
