@@ -34,6 +34,12 @@ Switching modes starts a new board. Daily mode requires the Docker/nginx deploym
 cannot call the NYT endpoint directly because it does not send CORS headers; the nginx proxy makes it
 same-origin and caches the response for six hours. The endpoint is undocumented, so Daily mode
 degrades to an error with a Retry button if it changes or is unavailable.
+
+<p align="center">
+  <img src="images/wordle-free.png" alt="Free play with the instruction above the board" width="640">
+  <br>
+  <sub>Free play keeps the same instruction slot above the board.</sub>
+</p>
 Free play has no network dependency beyond loading the app.
 
 It is a static React + TypeScript bundle. Free play needs no backend; Daily mode uses the same-origin
