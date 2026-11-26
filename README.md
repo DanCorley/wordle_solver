@@ -6,7 +6,7 @@ tiles the way Wordle did, and the candidates narrow as you go.
 **[wordle.watermancorley.com](https://wordle.watermancorley.com/)**
 
 <p align="center">
-  <img src="images/wordle-desktop.png" alt="Wordle Solver on desktop in Free play, with the board, live count, and opener choices" width="820">
+  <img src="images/wordle-desktop.png" alt="Wordle Solver on desktop in Daily mode (the default), with the board, live count, and opener choices" width="820">
   <br><br>
   <img src="images/wordle-mobile.png" alt="Wordle Solver on a phone in Daily mode, with RAISE automatically marked and 30 possible answers" width="330">
 </p>
@@ -26,14 +26,14 @@ tiles the way Wordle did, and the candidates narrow as you go.
 
 ## Play modes
 
+- **Daily** (default) fetches today's Wordle answer through the bundled nginx proxy and fills the
+  colors in automatically. The answer is used only to color tiles; it is not shown up front.
 - **Free play** works on any static host: type a guess and mark the tiles yourself.
-- **Daily** fetches today's Wordle answer through the bundled nginx proxy and fills the colors in
-  automatically. The answer is used only to color tiles; it is not shown up front.
 
-Daily mode requires the Docker/nginx deployment. A browser cannot call the NYT endpoint directly
-because it does not send CORS headers; the nginx proxy makes it same-origin and caches the response
-for six hours. The endpoint is undocumented, so Daily mode degrades to an error with a Retry button
-if it changes or is unavailable.
+Switching modes starts a new board. Daily mode requires the Docker/nginx deployment. A browser
+cannot call the NYT endpoint directly because it does not send CORS headers; the nginx proxy makes it
+same-origin and caches the response for six hours. The endpoint is undocumented, so Daily mode
+degrades to an error with a Retry button if it changes or is unavailable.
 Free play has no network dependency beyond loading the app.
 
 It is a static React + TypeScript bundle. Free play needs no backend; Daily mode uses the same-origin

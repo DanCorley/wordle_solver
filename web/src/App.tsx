@@ -13,6 +13,7 @@ const COLS = 5
 
 type Theme = 'light' | 'dark'
 type Mode = 'free' | 'daily'
+type AppProps = { initialMode?: Mode }
 type DailyState =
   | { status: 'idle' }
   | { status: 'loading'; date: string }
@@ -41,11 +42,11 @@ const nextMark = (mark: Mark | null): Mark | null => {
 const currentTheme = (): Theme =>
   document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
 
-export default function App() {
+export default function App({ initialMode = 'daily' }: AppProps = {}) {
   const [rows, setRows] = useState<Row[]>(() => Array.from({ length: ROWS }, blankRow))
   const [active, setActive] = useState(0)
   const [theme, setTheme] = useState<Theme>(currentTheme)
-  const [mode, setMode] = useState<Mode>('free')
+  const [mode, setMode] = useState<Mode>(initialMode)
   const [dailyState, setDailyState] = useState<DailyState>({ status: 'idle' })
   const [dailyAttempt, setDailyAttempt] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -305,26 +306,28 @@ export default function App() {
         </button>
       </header>
 
-      <div className="mode-bar" role="group" aria-label="Play mode">
-        <button
-          className="mode"
-          type="button"
-          aria-pressed={mode === 'free'}
-          data-mode="free"
-          onClick={() => switchMode('free')}
-        >
-          Free play
-        </button>
-        <button
-          className="mode"
-          type="button"
-          aria-pressed={mode === 'daily'}
-          data-mode="daily"
-          title="Fill in colors from today's Wordle"
-          onClick={() => switchMode('daily')}
-        >
-          Daily
-        </button>
+      <div className="mode-row">
+        <div className="mode-bar" role="group" aria-label="Play mode">
+          <button
+            className="mode"
+            type="button"
+            aria-pressed={mode === 'daily'}
+            data-mode="daily"
+            title="Fill in colors from today's Wordle"
+            onClick={() => switchMode('daily')}
+          >
+            Daily
+          </button>
+          <button
+            className="mode"
+            type="button"
+            aria-pressed={mode === 'free'}
+            data-mode="free"
+            onClick={() => switchMode('free')}
+          >
+            Free play
+          </button>
+        </div>
       </div>
 
       <div className="mobile-bar" aria-live="polite">

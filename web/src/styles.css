@@ -130,10 +130,20 @@ h1 {
 }
 
 /* mode switch */
+.mode-row {
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+  gap: 48px;
+  margin-bottom: 18px;
+}
+
+.mode-row .mode-bar {
+  justify-self: center;
+}
+
 .mode-bar {
   display: inline-flex;
   gap: 2px;
-  margin: 0 0 18px;
   padding: 3px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -203,10 +213,14 @@ h1 {
     margin-bottom: 14px;
   }
 
-  .mode-bar {
+  .mode-row {
     display: flex;
-    width: max-content;
-    margin: 0 auto 16px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .mode-row .mode-bar {
+    justify-self: auto;
   }
 
   .mobile-bar {

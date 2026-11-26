@@ -10,7 +10,7 @@ afterEach(() => {
 
 describe('App', () => {
   it('narrows to a single answer when CRANE is marked all green', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
     expect(screen.getByRole('status').getAttribute('aria-label')).toBe('2397 possible answers')
 
     for (const letter of 'crane') fireEvent.keyDown(window, { key: letter })
@@ -28,7 +28,7 @@ describe('App', () => {
   })
 
   it('falls back to legal guesses when no answer word fits', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     for (const letter of 'zymic') fireEvent.keyDown(window, { key: letter })
 
@@ -45,7 +45,7 @@ describe('App', () => {
   })
 
   it('narrows the count as soon as one tile is marked', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     for (const letter of 'crane') fireEvent.keyDown(window, { key: letter })
     fireEvent.click(screen.getByLabelText('Letter 1 of 5: C, unmarked'))
@@ -58,7 +58,7 @@ describe('App', () => {
   })
 
   it('loads a picked opener into the board', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     fireEvent.click(screen.getByRole('button', { name: 'RAISE' }))
 
@@ -67,7 +67,7 @@ describe('App', () => {
   })
 
   it('does not overwrite a row that is already being marked', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     for (const letter of 'raise') fireEvent.keyDown(window, { key: letter })
     fireEvent.click(screen.getByLabelText('Letter 1 of 5: R, unmarked'))
@@ -80,7 +80,7 @@ describe('App', () => {
   })
 
   it('accepts typing through the guess input', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     fireEvent.change(screen.getByLabelText('Your guess'), { target: { value: 'slate' } })
 
@@ -89,7 +89,7 @@ describe('App', () => {
   })
 
   it('shows the action buttons only after a row is entered', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     expect(screen.queryByRole('button', { name: 'Undo last' })).toBeNull()
 
@@ -100,7 +100,7 @@ describe('App', () => {
   })
 
   it('focuses the hidden guess input when the board is tapped', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     const input = screen.getByLabelText('Your guess')
     fireEvent.click(screen.getByRole('group', { name: 'Guess 1' }))
@@ -109,7 +109,7 @@ describe('App', () => {
   })
 
   it('advances to the next row on Enter from the guess input', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     const input = screen.getByLabelText('Your guess') as HTMLInputElement
     fireEvent.change(input, { target: { value: 'slate' } })
@@ -120,7 +120,7 @@ describe('App', () => {
   })
 
   it('clears marks when the word is edited', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     const input = screen.getByLabelText('Your guess') as HTMLInputElement
     fireEvent.change(input, { target: { value: 'crane' } })
@@ -132,7 +132,7 @@ describe('App', () => {
   })
 
   it('offers the list jump only once a tile is marked', () => {
-    render(<App />)
+    render(<App initialMode="free" />)
 
     fireEvent.click(screen.getByRole('button', { name: 'RAISE' }))
     expect(screen.queryByRole('button', { name: /View all/ })).toBeNull()
@@ -151,7 +151,9 @@ describe('App', () => {
     )
 
     render(<App />)
-    fireEvent.click(screen.getByRole('button', { name: 'Daily' }))
+    expect(screen.getByRole('button', { name: 'Daily' }).getAttribute('aria-pressed')).toBe(
+      'true',
+    )
 
     await waitFor(() => expect(screen.getByText(/fills in the colors/)).toBeTruthy())
 
@@ -171,7 +173,6 @@ describe('App', () => {
     )
 
     render(<App />)
-    fireEvent.click(screen.getByRole('button', { name: 'Daily' }))
 
     await waitFor(() => expect(screen.getByText(/Couldn't load today's Wordle/)).toBeTruthy())
     expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy()
