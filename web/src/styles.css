@@ -449,6 +449,19 @@ h1 {
   scroll-margin-top: 64px;
 }
 
+/* In the two-column layout the count sits at the top of a wide column; center it and
+   keep the column contents off the edges. */
+@media (min-width: 881px) {
+  .results-column {
+    padding: 8px 24px 0;
+  }
+
+  .results-column .count {
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+}
+
 .section {
   margin: 26px 0 10px;
   font-size: 0.72rem;
