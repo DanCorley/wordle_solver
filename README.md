@@ -28,7 +28,7 @@ tiles the way Wordle did, and the candidates narrow as you go.
 
 - **Free play** works on any static host: type a guess and mark the tiles yourself.
 - **Daily** fetches today's Wordle answer through the bundled nginx proxy and fills the colors in
-  automatically. It shows the colors, not the answer.
+  automatically. The answer is used only to color tiles; it is not shown up front.
 
 Daily mode requires the Docker/nginx deployment. A browser cannot call the NYT endpoint directly
 because it does not send CORS headers; the nginx proxy makes it same-origin and caches the response
