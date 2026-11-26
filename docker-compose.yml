@@ -4,4 +4,6 @@ services:
     container_name: wordle_solver
     ports:
       - 8501:8501
+    volumes:
+      - ./data/wordle:/tmp/wordle-cache
     restart: unless-stopped

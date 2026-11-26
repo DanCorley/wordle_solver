@@ -25,6 +25,9 @@ Thumbs.db
 logs/
 *.log
 
+# Local runtime cache; the build uses data/solutions.txt
+data/wordle/
+
 # Other
 *.xlsx
 *.png

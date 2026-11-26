@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "solutions": "node scripts/collect-solutions.mjs",
+    "dev": "npm run solutions && vite",
+    "build": "npm run solutions && tsc -b && vite build",
+    "test": "npm run solutions && vitest run",
+    "test:watch": "npm run solutions && vitest",
     "lint": "oxlint",
     "preview": "vite preview"
   },

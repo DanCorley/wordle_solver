@@ -55,6 +55,8 @@ export default function App({ initialMode = 'daily' }: AppProps = {}) {
 
   const activeWord = rows[active].word
   const started = rows.some((row) => row.word)
+  const activeIsSolution =
+    mode === 'daily' && dailyState.status === 'ready' && activeWord === dailyState.solution
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
@@ -152,7 +154,9 @@ export default function App({ initialMode = 'daily' }: AppProps = {}) {
   useEffect(() => {
     if (mode !== 'daily' || dailyState.status !== 'ready') return
     const row = rows[active]
-    if (row.word.length !== COLS || row.marks.some(Boolean) || !ALLOWED.has(row.word)) return
+    if (row.word.length !== COLS || row.marks.some(Boolean)) return
+    // The fetched answer is legal even if our bundled lists lag behind NYT.
+    if (!ALLOWED.has(row.word) && row.word !== dailyState.solution) return
 
     const marks = scoreGuess(row.word, dailyState.solution)
     // oxlint-disable-next-line react/set-state-in-effect
@@ -391,7 +395,7 @@ export default function App({ initialMode = 'daily' }: AppProps = {}) {
             aria-label="Your guess"
           />
 
-          {activeWord.length === COLS && !ALLOWED.has(activeWord) && (
+          {activeWord.length === COLS && !ALLOWED.has(activeWord) && !activeIsSolution && (
             <p className="hint warn-text">
               {activeWord.toUpperCase()} isn't in Wordle's guess list — double-check it.
             </p>

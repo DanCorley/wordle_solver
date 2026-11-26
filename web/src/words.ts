@@ -1,13 +1,17 @@
 import answersRaw from '../../data/answers.txt?raw'
 import guessesRaw from '../../data/guesses.txt?raw'
+import solutionsRaw from '../../data/solutions.txt?raw'
 
-const parse = (raw: string): string[] => raw.trim().split(/\s+/)
+const parse = (raw: string): string[] => (raw.trim() ? raw.trim().split(/\s+/) : [])
+
+// solutions.txt is generated from the per-day cache, so only words ship in the bundle.
+const answerSet = new Set([...parse(answersRaw), ...parse(solutionsRaw)])
 
 /** Words that can actually be the answer. */
-export const ANSWERS = parse(answersRaw)
+export const ANSWERS = [...answerSet]
 
 /** Legal guesses that were never eligible to be the answer. */
-export const GUESS_ONLY = parse(guessesRaw)
+export const GUESS_ONLY = parse(guessesRaw).filter((word) => !answerSet.has(word))
 
 /** Every word Wordle accepts as a guess, answers included. */
 export const ALLOWED = new Set([...ANSWERS, ...GUESS_ONLY])
