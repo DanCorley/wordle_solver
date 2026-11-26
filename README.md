@@ -52,8 +52,6 @@ filtering happens in the browser, so the count updates instantly.
 - `data/answers.txt` — 2,397 answers: the original 2,315 from @cfreshman's list plus 82
   words the NYT has used since 2022.
 - `data/guesses.txt` — 10,575 additional words Wordle accepts as a guess.
-- `data/solutions.txt` — every daily solution seen, one word per line. It is committed and merged
-  into the answer set at build time.
 
 The original lists come from [@cfreshman's Wordle gists](https://gist.github.com/cfreshman/a03ef2cba789d8cf00c08f767e0fad7b):
 the [answer list](https://gist.github.com/cfreshman/a03ef2cba789d8cf00c08f767e0fad7b) and the
@@ -62,12 +60,11 @@ newer answers were verified against the NYT daily solution endpoint and removed 
 guess-only file, so the two lists do not overlap. Last refreshed 2026-11-25.
 
 `data/wordle/` is a local HTTP cache written by nginx, one `YYYY-MM-DD.json` per fetched day. It is
-bind-mounted in Docker and ignored by git. `npm run solutions` merges any new solutions from that
-cache into `solutions.txt`; it only adds words, never removes them.
+bind-mounted in Docker and ignored by git.
 
-Possible answers are filtered from the answer list: `answers.txt` plus `data/solutions.txt`. If a
-board matches none of them, the app falls back to the guess-only words, labels them as outside the
-answer list, and keeps them separate from the main results.
+Possible answers are filtered from the 2,397-word answer list only. If a board matches none of
+them, the app falls back to the 10,575 guess-only words, labels them as outside the answer list,
+and keeps them separate from the main results.
 
 ## Local development
 

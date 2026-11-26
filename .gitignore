@@ -3,5 +3,5 @@
 node_modules/
 dist/
 
-# nginx runtime cache; data/solutions.txt is the committed copy
+# nginx runtime cache, not committed
 data/wordle/
