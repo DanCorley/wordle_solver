@@ -25,6 +25,9 @@ Thumbs.db
 logs/
 *.log
 
+# Local runtime cache, not needed in the image
+data/wordle/
+
 # Other
 *.xlsx
 *.png

@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App'
+import { ANSWER_COUNT } from './words'
 
 afterEach(() => {
   cleanup()
@@ -11,7 +12,9 @@ afterEach(() => {
 describe('App', () => {
   it('narrows to a single answer when CRANE is marked all green', () => {
     render(<App initialMode="free" />)
-    expect(screen.getByRole('status').getAttribute('aria-label')).toBe('2397 possible answers')
+    expect(screen.getByRole('status').getAttribute('aria-label')).toBe(
+      `${ANSWER_COUNT} possible answers`,
+    )
 
     for (const letter of 'crane') fireEvent.keyDown(window, { key: letter })
 
@@ -54,7 +57,7 @@ describe('App', () => {
     const count = Number(label.split(' ')[0])
 
     expect(count).toBeGreaterThan(0)
-    expect(count).toBeLessThan(2397)
+    expect(count).toBeLessThan(ANSWER_COUNT)
   })
 
   it('loads a picked opener into the board', () => {
@@ -170,6 +173,26 @@ describe('App', () => {
     })
     expect(screen.getByLabelText('Letter 1 of 5: S, not in the word')).toBeTruthy()
     expect(screen.getByLabelText('Letter 5 of 5: E, correct position')).toBeTruthy()
+  })
+
+  it('marks a daily answer that is missing from the word lists', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({ solution: 'zzzzz' }),
+      })),
+    )
+
+    render(<App />)
+    await waitFor(() => expect(screen.getByText(/fills in the colors/)).toBeTruthy())
+
+    for (const letter of 'zzzzz') fireEvent.keyDown(window, { key: letter })
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Letter 1 of 5: Z, correct position')).toBeTruthy()
+    })
+    expect(screen.queryByText(/isn't in Wordle's guess list/)).toBeNull()
   })
 
   it('shows a retry path when the daily answer cannot be loaded', async () => {

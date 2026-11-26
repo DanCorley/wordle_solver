@@ -2,3 +2,6 @@
 
 node_modules/
 dist/
+
+# nginx runtime cache, not committed
+data/wordle/
