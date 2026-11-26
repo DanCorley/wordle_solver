@@ -268,6 +268,13 @@ export default function App({ initialMode = 'daily' }: AppProps = {}) {
       ? 'possible answer'
       : 'possible answers'
 
+  const freeBoardNote =
+    started && (activeWord.length === COLS || guesses.length > 0)
+      ? guesses.length > 0
+        ? 'Mark the tiles on your guess to narrow the list, or pick any word from the list.'
+        : 'Mark the tiles on your guess to narrow the list.'
+      : 'Click the board to type, then mark each tile.'
+
   const boardNote =
     mode === 'daily'
       ? dailyState.status === 'error'
@@ -277,11 +284,7 @@ export default function App({ initialMode = 'daily' }: AppProps = {}) {
             ? "Colors from today's Wordle. Pick any word from the list."
             : "Type a guess; today's Wordle fills in the colors."
           : "Loading today's Wordle..."
-      : started && (activeWord.length === COLS || guesses.length > 0)
-        ? guesses.length > 0
-          ? 'Mark the tiles on your guess to narrow the list, or pick any word from the list.'
-          : 'Mark the tiles on your guess to narrow the list.'
-        : null
+      : freeBoardNote
 
   return (
     <div className="app">
@@ -387,14 +390,6 @@ export default function App({ initialMode = 'daily' }: AppProps = {}) {
             tabIndex={-1}
             aria-label="Your guess"
           />
-
-          {!boardNote && (
-            <p className="hint">
-              {activeWord.length === COLS
-                ? 'Click each tile to set its color.'
-                : 'Click the board to type, then mark each tile.'}
-            </p>
-          )}
 
           {activeWord.length === COLS && !ALLOWED.has(activeWord) && (
             <p className="hint warn-text">

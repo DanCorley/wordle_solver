@@ -108,6 +108,12 @@ describe('App', () => {
     expect(document.activeElement).toBe(input)
   })
 
+  it('shows the free-play instruction in the board note', () => {
+    render(<App initialMode="free" />)
+
+    expect(screen.getByText('Click the board to type, then mark each tile.')).toBeTruthy()
+  })
+
   it('advances to the next row on Enter from the guess input', () => {
     render(<App initialMode="free" />)
 
