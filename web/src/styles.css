@@ -129,6 +129,36 @@ h1 {
   border-color: var(--line-strong);
 }
 
+/* mode switch */
+.mode-bar {
+  display: inline-flex;
+  gap: 2px;
+  margin: 0 0 18px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.mode {
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.mode:hover {
+  color: var(--text);
+}
+
+.mode[aria-pressed='true'] {
+  background: var(--bg);
+  color: var(--text);
+}
+
 /* layout */
 .layout {
   display: grid;
@@ -171,6 +201,12 @@ h1 {
 
   .header {
     margin-bottom: 14px;
+  }
+
+  .mode-bar {
+    display: flex;
+    width: max-content;
+    margin: 0 auto 16px;
   }
 
   .mobile-bar {
@@ -289,6 +325,14 @@ h1 {
 
 .tile.filled:active {
   transform: scale(0.96);
+}
+
+.tile:disabled {
+  cursor: default;
+}
+
+.tile:disabled:active {
+  transform: none;
 }
 
 .row.active .tile.filled:not(.correct):not(.present):not(.absent) {

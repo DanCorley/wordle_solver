@@ -14,9 +14,10 @@ type Props = {
   active: number
   onCycle: (row: number, col: number) => void
   onActivate: (row: number) => void
+  locked?: boolean
 }
 
-export function Board({ rows, active, onCycle, onActivate }: Props) {
+export function Board({ rows, active, onCycle, onActivate, locked = false }: Props) {
   return (
     <div className="board">
       {rows.map((row, rowIndex) => (
@@ -37,6 +38,7 @@ export function Board({ rows, active, onCycle, onActivate }: Props) {
                 className={`tile filled${mark ? ` ${mark}` : ''}`}
                 key={col}
                 type="button"
+                disabled={locked}
                 onClick={() => onCycle(rowIndex, col)}
                 aria-label={`Letter ${col + 1} of ${row.marks.length}: ${letter.toUpperCase()}, ${
                   mark ? LABELS[mark] : 'unmarked'

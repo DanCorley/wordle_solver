@@ -4,7 +4,7 @@ import { Board } from './components/Board'
 import type { Row } from './components/Board'
 import { Footer } from './components/Footer'
 import { Results } from './components/Results'
-import { filterCandidates, rankGuesses } from './solver'
+import { filterCandidates, rankGuesses, scoreGuess } from './solver'
 import type { Guess, Mark } from './solver'
 import { ALLOWED, ANSWERS, GUESS_ONLY } from './words'
 
@@ -12,6 +12,19 @@ const ROWS = 6
 const COLS = 5
 
 type Theme = 'light' | 'dark'
+type Mode = 'free' | 'daily'
+type DailyState =
+  | { status: 'idle' }
+  | { status: 'loading'; date: string }
+  | { status: 'ready'; date: string; solution: string }
+  | { status: 'error'; date: string }
+
+const todayISO = (): string => {
+  const now = new Date()
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
+    now.getDate(),
+  ).padStart(2, '0')}`
+}
 
 const blankRow = (): Row => ({ word: '', marks: Array<Mark | null>(COLS).fill(null) })
 
@@ -32,6 +45,9 @@ export default function App() {
   const [rows, setRows] = useState<Row[]>(() => Array.from({ length: ROWS }, blankRow))
   const [active, setActive] = useState(0)
   const [theme, setTheme] = useState<Theme>(currentTheme)
+  const [mode, setMode] = useState<Mode>('free')
+  const [dailyState, setDailyState] = useState<DailyState>({ status: 'idle' })
+  const [dailyAttempt, setDailyAttempt] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
   const playRef = useRef<HTMLElement>(null)
@@ -50,6 +66,29 @@ export default function App() {
       // storage can be unavailable (private mode); the toggle still works this session
     }
   }, [theme])
+
+  useEffect(() => {
+    if (mode !== 'daily') return
+
+    const date = todayISO()
+    const controller = new AbortController()
+    // oxlint-disable-next-line react/set-state-in-effect
+    setDailyState({ status: 'loading', date })
+
+    fetch(`/api/wordle/${date}.json`, { signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Wordle request failed: ${response.status}`)
+        const data = (await response.json()) as { solution?: unknown }
+        const solution = typeof data.solution === 'string' ? data.solution.toLowerCase() : ''
+        if (!/^[a-z]{5}$/.test(solution)) throw new Error('Unexpected Wordle response')
+        setDailyState({ status: 'ready', date, solution })
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setDailyState({ status: 'error', date })
+      })
+
+    return () => controller.abort()
+  }, [dailyAttempt, mode])
 
   const backspace = useCallback(() => {
     if (!rows[active].word && active === 0) return
@@ -89,13 +128,15 @@ export default function App() {
 
       if (event.key === 'Enter') {
         if ((event.target as HTMLElement | null)?.tagName === 'BUTTON') return
-        if (rows[active].word.length === COLS) setActive(Math.min(active + 1, ROWS - 1))
+        if (mode !== 'daily' && rows[active].word.length === COLS) {
+          setActive(Math.min(active + 1, ROWS - 1))
+        }
       }
     }
 
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [active, backspace, rows])
+  }, [active, backspace, mode, rows])
 
   // Marks can arrive in one batched render (quick taps), so advance after the row settles.
   useEffect(() => {
@@ -105,6 +146,17 @@ export default function App() {
       setActive(active + 1)
     }
   }, [rows, active])
+
+  // Daily mode gets its colors from the fetched answer; free mode waits for tile clicks.
+  useEffect(() => {
+    if (mode !== 'daily' || dailyState.status !== 'ready') return
+    const row = rows[active]
+    if (row.word.length !== COLS || row.marks.some(Boolean) || !ALLOWED.has(row.word)) return
+
+    const marks = scoreGuess(row.word, dailyState.solution)
+    // oxlint-disable-next-line react/set-state-in-effect
+    setRows((prev) => prev.map((current, i) => (i === active ? { ...current, marks } : current)))
+  }, [active, dailyState, mode, rows])
 
   function typeWord(value: string) {
     const word = value.toLowerCase().replace(/[^a-z]/g, '').slice(0, COLS)
@@ -159,6 +211,16 @@ export default function App() {
     setActive(0)
   }
 
+  function switchMode(next: Mode) {
+    if (next === mode) return
+    setMode(next)
+    reset()
+  }
+
+  function retryDaily() {
+    setDailyAttempt((attempt) => attempt + 1)
+  }
+
   function scrollToResults() {
     resultsRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
   }
@@ -174,12 +236,20 @@ export default function App() {
     return played
   }, [rows])
 
+  // Include the fetched daily answer even if it arrives after this data snapshot.
+  const answerPool = useMemo(() => {
+    if (mode !== 'daily' || dailyState.status !== 'ready') return ANSWERS
+    return ANSWERS.includes(dailyState.solution)
+      ? ANSWERS
+      : [...ANSWERS, dailyState.solution]
+  }, [dailyState, mode])
+
   const candidates = useMemo(() => {
-    const matches = filterCandidates(ANSWERS, guesses)
+    const matches = filterCandidates(answerPool, guesses)
     // Usefulness ordering only matters once the board is in play.
     if (guesses.length === 0 || matches.length <= 1) return matches
     return rankGuesses(matches, matches.length)
-  }, [guesses])
+  }, [answerPool, guesses])
   // Only reach for the guess-only dictionary when no answer word fits at all.
   const guessMatches = useMemo(() => {
     if (guesses.length === 0 || candidates.length > 0) return []
@@ -196,7 +266,21 @@ export default function App() {
     : shownCount === 1
       ? 'possible answer'
       : 'possible answers'
-  const showBoardNote = started && (activeWord.length === COLS || guesses.length > 0)
+
+  const boardNote =
+    mode === 'daily'
+      ? dailyState.status === 'error'
+        ? "Couldn't load today's Wordle. Switch to Free play to mark tiles manually."
+        : dailyState.status === 'ready'
+          ? guesses.length > 0
+            ? "Colors from today's Wordle. Pick any word from the list."
+            : "Type a guess; today's Wordle fills in the colors."
+          : "Loading today's Wordle..."
+      : started && (activeWord.length === COLS || guesses.length > 0)
+        ? guesses.length > 0
+          ? 'Mark the tiles on your guess to narrow the list, or pick any word from the list.'
+          : 'Mark the tiles on your guess to narrow the list.'
+        : null
 
   return (
     <div className="app">
@@ -221,6 +305,28 @@ export default function App() {
         </button>
       </header>
 
+      <div className="mode-bar" role="group" aria-label="Play mode">
+        <button
+          className="mode"
+          type="button"
+          aria-pressed={mode === 'free'}
+          data-mode="free"
+          onClick={() => switchMode('free')}
+        >
+          Free play
+        </button>
+        <button
+          className="mode"
+          type="button"
+          aria-pressed={mode === 'daily'}
+          data-mode="daily"
+          title="Fill in colors from today's Wordle"
+          onClick={() => switchMode('daily')}
+        >
+          Daily
+        </button>
+      </div>
+
       <div className="mobile-bar" aria-live="polite">
         {started && guesses.length > 0 ? (
           <button
@@ -243,15 +349,15 @@ export default function App() {
 
       <main className={`layout${started ? '' : ' empty'}`}>
         <section className="play" aria-label="Your board" ref={playRef}>
-          {showBoardNote && (
-            <p className="hint hint-above">
-              {guesses.length > 0
-                ? 'Mark the tiles on your guess to narrow the list, or pick any word from the list.'
-                : 'Mark the tiles on your guess to narrow the list.'}
-            </p>
-          )}
+          {boardNote && <p className="hint hint-above">{boardNote}</p>}
 
-          <Board rows={rows} active={active} onCycle={cycleMark} onActivate={activateBoard} />
+          <Board
+            rows={rows}
+            active={active}
+            onCycle={cycleMark}
+            onActivate={activateBoard}
+            locked={mode === 'daily'}
+          />
 
           <input
             ref={inputRef}
@@ -265,7 +371,7 @@ export default function App() {
                 backspace()
                 return
               }
-              if (event.key === 'Enter' && activeWord.length === COLS) {
+              if (event.key === 'Enter' && mode !== 'daily' && activeWord.length === COLS) {
                 setActive(Math.min(active + 1, ROWS - 1))
               }
             }}
@@ -279,7 +385,7 @@ export default function App() {
             aria-label="Your guess"
           />
 
-          {!showBoardNote && (
+          {!boardNote && (
             <p className="hint">
               {activeWord.length === COLS
                 ? 'Click each tile to set its color.'
@@ -304,6 +410,14 @@ export default function App() {
               <i className="swatch absent" />× not in word
             </span>
           </p>
+
+          {mode === 'daily' && dailyState.status === 'error' && (
+            <div className="actions">
+              <button className="action" type="button" onClick={retryDaily}>
+                Retry
+              </button>
+            </div>
+          )}
 
           {rows.some((row) => row.word) && (
             <div className="actions">

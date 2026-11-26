@@ -6,25 +6,39 @@ tiles the way Wordle did, and the candidates narrow as you go.
 **[wordle.watermancorley.com](https://wordle.watermancorley.com/)**
 
 <p align="center">
-  <img src="images/wordle-desktop.png" alt="Wordle Solver on desktop with the board, live count, and opener choices" width="820">
+  <img src="images/wordle-desktop.png" alt="Wordle Solver on desktop in Free play, with the board, live count, and opener choices" width="820">
   <br><br>
-  <img src="images/wordle-mobile.png" alt="Wordle Solver on a phone with a marked guess and 11 possible answers" width="330">
+  <img src="images/wordle-mobile.png" alt="Wordle Solver on a phone in Daily mode, with RAISE automatically marked and 30 possible answers" width="330">
 </p>
 
 ## How it works
 
 - Type a five-letter guess, or tap the board on a phone to raise the keyboard. `Enter` moves to the
   next row.
-- Click each tile to cycle its color: green ✓ right spot, yellow ↔ wrong spot, grey × not in the word.
-- The count and word list narrow as soon as you mark a tile. Unmarked tiles are ignored, so a
+- In Free play, click each tile to cycle its color: green ✓ right spot, yellow ↔ wrong spot, grey ×
+  not in the word. In Daily mode the colors fill in automatically.
+- The count and word list narrow as soon as a tile is marked. Unmarked tiles are ignored, so a
   half-filled row never hides the answer.
 - Click a suggested opener or any candidate word to load it into the active row.
 - `Undo last` clears the most recent guess. `New game` resets the board.
 - The theme button switches light/dark and remembers your choice.
 - On phones, a sticky bar keeps the live count in view.
 
-It is a static React + TypeScript bundle. No backend: the word lists ship with the bundle and
-filtering happens in the browser, so the count updates instantly.
+## Play modes
+
+- **Free play** works on any static host: type a guess and mark the tiles yourself.
+- **Daily** fetches today's Wordle answer through the bundled nginx proxy and fills the colors in
+  automatically. It shows the colors, not the answer.
+
+Daily mode requires the Docker/nginx deployment. A browser cannot call the NYT endpoint directly
+because it does not send CORS headers; the nginx proxy makes it same-origin and caches the response
+for six hours. The endpoint is undocumented, so Daily mode degrades to an error with a Retry button
+if it changes or is unavailable.
+Free play has no network dependency beyond loading the app.
+
+It is a static React + TypeScript bundle. Free play needs no backend; Daily mode uses the same-origin
+nginx proxy for the current answer. The word lists ship with the bundle and filtering happens in the
+browser, so the count updates instantly.
 
 ## Word lists
 
@@ -62,4 +76,5 @@ make up          # http://localhost:8501
 ## Tests
 
 `web/src/solver.test.ts` covers the marking rules (including repeated letters) and filtering.
-`web/src/App.test.tsx` types a guess, marks all five tiles, and checks the count collapses to one.
+`web/src/App.test.tsx` covers typing, manual marking, Daily auto-marking, fallback results, and the
+solved state.

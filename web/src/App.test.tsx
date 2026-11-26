@@ -1,9 +1,12 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import App from './App'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.unstubAllGlobals()
+})
 
 describe('App', () => {
   it('narrows to a single answer when CRANE is marked all green', () => {
@@ -136,5 +139,41 @@ describe('App', () => {
 
     fireEvent.click(screen.getByLabelText('Letter 1 of 5: R, unmarked'))
     expect(screen.getByRole('button', { name: /View all/ })).toBeTruthy()
+  })
+
+  it('marks daily guesses automatically from the fetched answer', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({ solution: 'crane' }),
+      })),
+    )
+
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Daily' }))
+
+    await waitFor(() => expect(screen.getByText(/fills in the colors/)).toBeTruthy())
+
+    for (const letter of 'slate') fireEvent.keyDown(window, { key: letter })
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Letter 3 of 5: A, correct position')).toBeTruthy()
+    })
+    expect(screen.getByLabelText('Letter 1 of 5: S, not in the word')).toBeTruthy()
+    expect(screen.getByLabelText('Letter 5 of 5: E, correct position')).toBeTruthy()
+  })
+
+  it('shows a retry path when the daily answer cannot be loaded', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: false, status: 503, json: async () => ({}) })),
+    )
+
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Daily' }))
+
+    await waitFor(() => expect(screen.getByText(/Couldn't load today's Wordle/)).toBeTruthy())
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy()
   })
 })
