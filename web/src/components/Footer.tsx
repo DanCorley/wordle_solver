@@ -10,7 +10,7 @@ export function Footer() {
         <strong>{ALLOWED_COUNT.toLocaleString()}</strong> can be played
       </p>
       <p>
-        Word lists from{' '}
+        Original lists from{' '}
         <a href={ATTRIBUTION} target="_blank" rel="noreferrer">
           @cfreshman
         </a>{' '}
@@ -30,6 +30,11 @@ export function Footer() {
         >
           allowed guesses
         </a>
+        . 82 newer answers from the{' '}
+        <a href="https://www.nytimes.com/games/wordle/" target="_blank" rel="noreferrer">
+          NYT
+        </a>
+        .
       </p>
     </footer>
   )

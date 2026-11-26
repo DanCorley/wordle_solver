@@ -59,6 +59,7 @@ allot
 allow
 alloy
 aloft
+aloha
 alone
 along
 aloof
@@ -115,10 +116,14 @@ ascot
 ashen
 aside
 askew
+aspic
 assay
 asset
+aster
+atlas
 atoll
 atone
+atria
 attic
 audio
 audit
@@ -147,6 +152,7 @@ baggy
 baker
 baler
 balmy
+balsa
 banal
 banjo
 barge
@@ -167,6 +173,7 @@ beach
 beady
 beard
 beast
+beaut
 beech
 beefy
 befit
@@ -175,6 +182,7 @@ begat
 beget
 begin
 begun
+beige
 being
 belch
 belie
@@ -300,6 +308,7 @@ built
 bulge
 bulky
 bully
+bumpy
 bunch
 bunny
 burly
@@ -331,10 +340,12 @@ canny
 canoe
 canon
 caper
+capon
 caput
 carat
 cargo
 carol
+carom
 carry
 carve
 caste
@@ -424,10 +435,12 @@ cluck
 clued
 clump
 clung
+clunk
 coach
 coast
 cobra
 cocoa
+colic
 colon
 color
 comet
@@ -499,6 +512,7 @@ crush
 crust
 crypt
 cubic
+cubit
 cumin
 curio
 curly
@@ -563,6 +577,7 @@ ditch
 ditto
 ditty
 diver
+divot
 dizzy
 dodge
 dodgy
@@ -589,6 +604,7 @@ drawl
 drawn
 dread
 dream
+dreck
 dress
 dried
 drier
@@ -651,6 +667,7 @@ email
 embed
 ember
 emcee
+emoji
 empty
 enact
 endow
@@ -849,6 +866,7 @@ geeky
 geese
 genie
 genre
+geode
 ghost
 ghoul
 giant
@@ -858,6 +876,7 @@ girly
 girth
 given
 giver
+gizmo
 glade
 gland
 glare
@@ -877,6 +896,7 @@ glyph
 gnash
 gnome
 godly
+gofer
 going
 golem
 golly
@@ -909,11 +929,13 @@ greed
 green
 greet
 grief
+grift
 grill
 grime
 grimy
 grind
 gripe
+grist
 groan
 groin
 groom
@@ -927,6 +949,7 @@ grown
 gruel
 gruff
 grunt
+guano
 guard
 guava
 guess
@@ -940,6 +963,7 @@ gulch
 gully
 gumbo
 gummy
+gunky
 guppy
 gusto
 gusty
@@ -984,6 +1008,7 @@ hitch
 hoard
 hobby
 hoist
+holey
 holly
 homer
 honey
@@ -1009,6 +1034,7 @@ hurry
 husky
 hussy
 hutch
+hydra
 hydro
 hyena
 hymen
@@ -1030,6 +1056,7 @@ inane
 inbox
 incur
 index
+indie
 inept
 inert
 infer
@@ -1038,6 +1065,7 @@ inlay
 inlet
 inner
 input
+intel
 inter
 intro
 ionic
@@ -1068,9 +1096,12 @@ junta
 junto
 juror
 kappa
+karat
 karma
 kayak
+kazoo
 kebab
+kefir
 khaki
 kinky
 kiosk
@@ -1080,6 +1111,7 @@ knave
 knead
 kneed
 kneel
+knell
 knelt
 knife
 knock
@@ -1098,6 +1130,7 @@ lapel
 lapse
 large
 larva
+laser
 lasso
 latch
 later
@@ -1138,6 +1171,7 @@ liner
 lingo
 lipid
 lithe
+liven
 liver
 livid
 llama
@@ -1152,6 +1186,7 @@ logic
 login
 loopy
 loose
+loris
 lorry
 loser
 louse
@@ -1205,7 +1240,9 @@ mason
 masse
 match
 matey
+matte
 mauve
+maven
 maxim
 maybe
 mayor
@@ -1222,6 +1259,7 @@ mercy
 merge
 merit
 merry
+messy
 metal
 meter
 metro
@@ -1248,8 +1286,10 @@ mogul
 moist
 molar
 moldy
+mommy
 money
 month
+mooch
 moody
 moose
 moral
@@ -1269,9 +1309,11 @@ mouth
 mover
 movie
 mower
+moxie
 mucky
 mucus
 muddy
+muggy
 mulch
 mummy
 munch
@@ -1294,12 +1336,14 @@ needy
 neigh
 nerdy
 nerve
+nervy
 never
 newer
 newly
 nicer
 niche
 niece
+nifty
 night
 ninja
 ninny
@@ -1320,6 +1364,7 @@ nutty
 nylon
 nymph
 oaken
+oasis
 obese
 occur
 ocean
@@ -1337,6 +1382,7 @@ ombre
 omega
 onion
 onset
+oomph
 opera
 opine
 opium
@@ -1362,6 +1408,7 @@ oxide
 ozone
 paddy
 pagan
+pager
 paint
 paler
 palsy
@@ -1370,6 +1417,7 @@ panic
 pansy
 papal
 paper
+parch
 parer
 parka
 parry
@@ -1390,6 +1438,7 @@ peach
 pearl
 pecan
 pedal
+peeve
 penal
 pence
 penne
@@ -1415,6 +1464,7 @@ pinch
 piney
 pinky
 pinto
+pious
 piper
 pique
 pitch
@@ -1460,6 +1510,7 @@ pound
 pouty
 power
 prank
+prate
 prawn
 preen
 press
@@ -1469,6 +1520,7 @@ pride
 pried
 prime
 primo
+primp
 print
 prior
 prism
@@ -1486,6 +1538,8 @@ proxy
 prude
 prune
 psalm
+pshaw
+psych
 pubic
 pudgy
 puffy
@@ -1570,6 +1624,7 @@ relax
 relay
 relic
 remit
+remix
 renal
 renew
 repay
@@ -1598,6 +1653,7 @@ riper
 risen
 riser
 risky
+ritzy
 rival
 river
 rivet
@@ -1627,6 +1683,7 @@ rugby
 ruler
 rumba
 rumor
+runny
 rupee
 rural
 rusty
@@ -1669,6 +1726,7 @@ scoff
 scold
 scone
 scoop
+scoot
 scope
 score
 scorn
@@ -1724,6 +1782,7 @@ shelf
 shell
 shied
 shift
+shill
 shine
 shiny
 shire
@@ -1741,6 +1800,7 @@ shout
 shove
 shown
 showy
+shred
 shrew
 shrub
 shrug
@@ -1759,6 +1819,7 @@ sinew
 singe
 siren
 sissy
+sitar
 sixth
 sixty
 skate
@@ -1814,10 +1875,12 @@ smoke
 smoky
 smote
 snack
+snafu
 snail
 snake
 snaky
 snare
+snark
 snarl
 sneak
 sneer
@@ -1843,6 +1906,7 @@ sooth
 sooty
 sorry
 sound
+soupy
 south
 sower
 space
@@ -1851,6 +1915,7 @@ spank
 spare
 spark
 spasm
+spate
 spawn
 speak
 spear
@@ -1893,6 +1958,7 @@ spurt
 squad
 squat
 squib
+squid
 stack
 staff
 stage
@@ -1921,6 +1987,7 @@ steel
 steep
 steer
 stein
+stent
 stern
 stick
 stiff
@@ -1948,6 +2015,7 @@ stove
 strap
 straw
 stray
+strew
 strip
 strut
 stuck
@@ -1959,6 +2027,7 @@ stunk
 stunt
 style
 suave
+suede
 sugar
 suing
 suite
@@ -2018,6 +2087,7 @@ taste
 tasty
 tatty
 taunt
+taupe
 tawny
 teach
 teary
@@ -2066,10 +2136,13 @@ tight
 tilde
 timer
 timid
+tinge
 tipsy
 titan
 tithe
 title
+tizzy
+toady
 toast
 today
 toddy
@@ -2110,6 +2183,7 @@ tribe
 trice
 trick
 tried
+trill
 tripe
 trite
 troll
@@ -2138,6 +2212,7 @@ tutor
 twang
 tweak
 tweed
+tween
 tweet
 twice
 twine
@@ -2149,6 +2224,7 @@ udder
 ulcer
 ultra
 umbra
+uncap
 uncle
 uncut
 under
@@ -2167,6 +2243,7 @@ untie
 until
 unwed
 unzip
+upend
 upper
 upset
 urban
@@ -2176,8 +2253,10 @@ usher
 using
 usual
 usurp
+usury
 utile
 utter
+uvula
 vague
 valet
 valid
@@ -2227,6 +2306,7 @@ wager
 wagon
 waist
 waive
+waken
 waltz
 warty
 waste
@@ -2305,9 +2385,11 @@ wrote
 wrung
 wryly
 yacht
+yahoo
 yearn
 yeast
 yield
+yodel
 young
 youth
 zebra

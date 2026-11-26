@@ -8,7 +8,7 @@ afterEach(cleanup)
 describe('App', () => {
   it('narrows to a single answer when CRANE is marked all green', () => {
     render(<App />)
-    expect(screen.getByRole('status').getAttribute('aria-label')).toBe('2315 possible answers')
+    expect(screen.getByRole('status').getAttribute('aria-label')).toBe('2397 possible answers')
 
     for (const letter of 'crane') fireEvent.keyDown(window, { key: letter })
 
@@ -51,7 +51,7 @@ describe('App', () => {
     const count = Number(label.split(' ')[0])
 
     expect(count).toBeGreaterThan(0)
-    expect(count).toBeLessThan(2315)
+    expect(count).toBeLessThan(2397)
   })
 
   it('loads a picked opener into the board', () => {
